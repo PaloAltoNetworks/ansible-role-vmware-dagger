@@ -1,0 +1,18 @@
+---
+# defaults file for ansible-role-vmware-dagger
+
+# VMware variables
+
+vmware_tag: 
+vmware_server: 
+vmware_username: 
+vmware_password: 
+vmware_datacenter: 
+vmware_validate_certs: False
+
+# PAN-OS variables
+
+panos_address: 
+panos_username: 
+panos_password: 
+panos_api_key: 

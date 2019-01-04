@@ -1,0 +1,52 @@
+---
+# tasks file for ansible-role-vmware-dagger
+
+- name: Gather facts from vCenter virtual machines
+  vmware_guest_facts:
+    hostname: "{{ lookup('env','VMWARE_SERVER') }}"
+    username: "{{ lookup('env','VMWARE_USERNAME') }}"
+    password: "{{ lookup('env','VMWARE_PASSWORD') }}"
+    datacenter: '{{ vmware_datacenter }}'
+    uuid: '{{ inventory_hostname[-36:] }}'
+    validate_certs: '{{ vmware_validate_certs }}'
+  register: vm_facts
+
+- name: Parse the primary IPv4 address
+  set_fact:
+    ipv4: '{{ vm_facts.instance.ipv4 }}'
+
+- name: Display the primary IPv4 address
+  debug:
+    var: ipv4
+
+- name: Parse the primary IPv6 address
+  set_fact:
+    ipv6: '{{ vm_facts.instance.ipv6 }}'
+
+- name: Print the primary IPv6 address
+  debug:
+    var: ipv6
+
+- name: Register vCenter IPv4 virtual machines
+  panos_dag_tags:
+    ip_address: '{{ panos_address }}'
+    username: '{{ panos_username }}'
+    password: '{{ panos_password }}'
+    api_key: '{{ panos_api_key }}'
+    ip_to_register: '{{ ipv4 }}'
+    tag_names: ['{{ vmware_tag }}']
+    operation: 'add'
+    commit: False
+  when: ipv4 != ""
+
+- name: Register vCenter IPv6 virtual machines
+  panos_dag_tags:
+    ip_address: '{{ panos_address }}'
+    username: '{{ panos_username }}'
+    password: '{{ panos_password }}'
+    api_key: '{{ panos_api_key }}'
+    ip_to_register: '{{ ipv6 }}'
+    tag_names: ['{{ vmware_tag }}']
+    operation: 'add'
+    commit: False
+  when: ipv6 != ""

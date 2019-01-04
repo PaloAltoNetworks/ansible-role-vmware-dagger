@@ -1,0 +1,16 @@
+galaxy_info:
+  role_name: vmware-dagger
+  author: stealthllama
+  description: Gathers virtual machine IP addresses from vCenter and registers them in PAN-OS Dynamic Address Groups based on an associated tag value.
+  company: Palo Alto Networks
+  license: Apache-2.0
+  min_ansible_version: 2.6
+  galaxy_tags:
+    - vcenter
+    - vsphere
+    - vmware
+    - security
+    - paloaltonetworks
+    - panos
+
+dependencies: []
