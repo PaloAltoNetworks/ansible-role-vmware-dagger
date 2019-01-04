@@ -13,7 +13,7 @@ This role utilizes the Python libraries listed below.  All are available via [Py
 
 In addition, the [vSphere Automation SDK](https://github.com/vmware/vsphere-automation-sdk-python) is required for dynamic inventory discovery with VMware tag support.  This SDK may be installed as follows:
 
-shell```
+```
 $ git clone https://github.com/vmware/vsphere-automation-sdk-python.git
 $ cd vsphere-automation-sdk-python
 $ pip install --upgrade --force-reinstall -r requirements.txt --extra-index-url file:///<absolute_path_to_sdk>/lib
@@ -23,7 +23,7 @@ Role Variables
 --------------
 Available variables are listed below, along with default values (see defaults/main.yml):
 
-yaml```
+```
 # VMware variables
 vmware_tag:
 vmware_datacenter:
@@ -42,7 +42,7 @@ None
 
 Example Playbook
 ----------------
-yaml```
+```
 ---
 - name: Register tagged vCenter virtual machines in PAN-OS DAGs
   hosts: '{{ vmware_tag }}'
