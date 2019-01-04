@@ -58,7 +58,7 @@ This role leverages the [vmware_vm_inventory](https://docs.ansible.com/ansible/l
 
 The [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) plugin utilizes the following environment variables 
 
-shell```
+```
 $ export VMWARE_SERVER="<vcenter hostname or ip address>"
 $ export VMWARE_USERNAME="<vcenter username>"
 $ export VMWARE_PASSWORD="<vcenter password>"
@@ -66,7 +66,7 @@ $ export VMWARE_PASSWORD="<vcenter password>"
 
 A plugin configuration file called `vmware.yml` is required and should contain the following:
 
-yaml```
+```
 ---
 plugin: vmware_vm_inventory
 validate_certs: False
