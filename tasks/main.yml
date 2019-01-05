@@ -1,6 +1,5 @@
 ---
 # tasks file for ansible-role-vmware-dagger
-
 - name: Gather facts from vCenter virtual machines
   vmware_guest_facts:
     hostname: "{{ lookup('env','VMWARE_SERVER') }}"
@@ -50,4 +49,3 @@
     operation: 'add'
     commit: False
   when: ipv6 | length > 0
-

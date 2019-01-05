@@ -1,4 +1,4 @@
-vmware-dagger
+vmware_dagger
 =========
 An Ansible role that gathers virtual machine IP addresses from vCenter and registers them in PAN-OS Dynamic Address Groups based on an associated VMware tag.
  
@@ -6,7 +6,7 @@ Requirements
 ------------
 This role utilizes the Python libraries listed below.  All are available via [PyPI](https://pypi.org) and may be installed using the `pip` installer.  The use of `virtualenv` is recommended in order to avoid system library conflicts.
 
-- [pyvomi](https://pypi.org/project/pyvmomi/)
+- [pyvmomi](https://pypi.org/project/pyvmomi/)
 - [pan-python](https://pypi.org/project/pan-python/)
 - [pandevice](https://pypi.org/project/pandevice/)
 - [requests](https://pypi.org/project/requests/)
@@ -49,7 +49,7 @@ Example Playbook
   connection: local
 
   roles:
-  - stealthllama.vmware-dagger
+  - stealthllama.vmware_dagger
 ```
 
 Dynamic Inventory
@@ -59,7 +59,7 @@ This role leverages the [vmware_vm_inventory](https://docs.ansible.com/ansible/l
 The [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) plugin utilizes the following environment variables 
 
 ```
-$ export VMWARE_SERVER="<vcenter hostname or ip address>"
+$ export VMWARE_SERVER="<vcenter hostname/ip-address>"
 $ export VMWARE_USERNAME="<vcenter username>"
 $ export VMWARE_PASSWORD="<vcenter password>"
 ```
@@ -79,15 +79,25 @@ Usage
 -----
 The playbook requires a number of variables to run successfully. These variables may be defined in a separate YAML file, provided on the command line with the `--extra-vars` flag, or provided via the Ansible Tower API.
 
-*Variables file*
+*Variables file:*
 ```
 $ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars=@myvars.yml
 ```
 
-*Command line*
+*Command line (JSON):*
 ```
 $ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='{"vm_tag":"MyTag","vmware_datacenter":"MyLab", \
 "panos_address":"10.0.0.1","panos_username":"admin","panos_password":"s3cr3tp@ssw0rd"}'
+```
+
+*Command line (YAML):*
+```
+$ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='
+vm_tag: "MyTag"
+vmware_datacenter: "MyLab"
+panos_address: "10.0.0.1"
+panos_username: "admin"
+panos_password: "s3cr3tp@ssw0rd"'
 ```
 
 License
