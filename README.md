@@ -21,13 +21,13 @@ $ pip install --upgrade --force-reinstall -r requirements.txt --extra-index-url 
 
 Role Variables
 --------------
-Available variables are listed below, along with default values (see defaults/main.yml):
+The required variables are listed below, along with default values (see defaults/main.yml):
 
 ```
 # VMware variables
-vmware_tag:
-vmware_datacenter:
-vmware_validate_certs: 
+vmware_tag: 
+vmware_datacenter: 
+vmware_validate_certs: False
 
 # PAN-OS variables
 panos_address:
@@ -52,8 +52,8 @@ Example Playbook
   - stealthllama.vmware-dagger
 ```
 
-Usage
------
+Dynamic Inventory
+-----------------
 This role leverages the [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) Dynamic Inventory plugin to inventory vSphere virtual machines and group them by their tag values.
 
 The [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) plugin utilizes the following environment variables 
@@ -74,6 +74,21 @@ with_tags: True
 ```
 
 The Dynamic Inventory plugin can be tested using the following command: `ansible-inventory -i vmware.yml --graph`
+
+Usage
+-----
+The playbook requires a number of variables to run successfully. These variables may be defined in a separate YAML file, provided on the command line with the `--extra-vars` flag, or provided via the Ansible Tower API.
+
+*Variables file*
+```
+$ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars=@myvars.yml
+```
+
+*Command line*
+```
+$ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='{"vm_tag":"MyTag","vmware_datacenter":"MyLab", \
+"panos_address":"10.0.0.1","panos_username":"admin","panos_password":"s3cr3tp@ssw0rd"}'
+```
 
 License
 -------
