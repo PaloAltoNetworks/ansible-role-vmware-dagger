@@ -37,7 +37,7 @@
     tag_names: ['{{ vmware_tag }}']
     operation: 'add'
     commit: False
-  when: ipv4.stderr | length > 0
+  when: ipv4 != ""
 
 - name: Register vCenter IPv6 virtual machines
   panos_dag_tags:
@@ -49,4 +49,4 @@
     tag_names: ['{{ vmware_tag }}']
     operation: 'add'
     commit: False
-  when: ipv6.stderr | length > 0
+  when: ipv6 != ""
