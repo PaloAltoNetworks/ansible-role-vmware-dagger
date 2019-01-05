@@ -19,6 +19,13 @@ $ cd vsphere-automation-sdk-python
 $ pip install --upgrade --force-reinstall -r requirements.txt --extra-index-url file:///<absolute_path_to_sdk>/lib
 ```
 
+Dependencies
+------------
+Support for TLS 1.0 was dropped in PAN-OS version 8.0. Connecting to platforms running PAN-OS 8.0 or greater may require updates to the OpenSSL and/or Python packages on the Ansible host.
+
+- OpenSSL 1.0.1 or greater
+- Python 2.7 or greater
+
 Role Variables
 --------------
 The required variables are listed below, along with default values (see defaults/main.yml):
@@ -36,10 +43,6 @@ panos_password:
 panos_api_key:
 ```
 
-Dependencies
-------------
-None
-
 Example Playbook
 ----------------
 ```
@@ -56,7 +59,7 @@ Dynamic Inventory
 -----------------
 This role leverages the [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) Dynamic Inventory plugin to inventory vSphere virtual machines and group them by their tag values.
 
-The [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) plugin utilizes the following environment variables 
+The [vmware_vm_inventory](https://docs.ansible.com/ansible/latest/plugins/inventory/vmware_vm_inventory.html) plugin utilizes the following environment variables:
 
 ```
 $ export VMWARE_SERVER="<vcenter hostname/ip-address>"
@@ -73,7 +76,10 @@ validate_certs: False
 with_tags: True
 ```
 
-The Dynamic Inventory plugin can be tested using the following command: `ansible-inventory -i vmware.yml --graph`
+The Dynamic Inventory plugin can be tested using the following command:
+```
+ansible-inventory -i vmware.yml --graph
+```
 
 Usage
 -----
