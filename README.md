@@ -7,9 +7,7 @@ Requirements
 This role utilizes the Python libraries listed below.  All are available via [PyPI](https://pypi.org) and may be installed using the `pip` installer.  The use of `virtualenv` is recommended in order to avoid system library conflicts.
 
 - [pyvmomi](https://pypi.org/project/pyvmomi/)
-- [pan-python](https://pypi.org/project/pan-python/)
 - [pandevice](https://pypi.org/project/pandevice/)
-- [requests](https://pypi.org/project/requests/)
 
 In addition, the [vSphere Automation SDK](https://github.com/vmware/vsphere-automation-sdk-python) is required for dynamic inventory discovery with VMware tag support.  This SDK may be installed as follows:
 
@@ -25,6 +23,7 @@ Support for TLS 1.0 was dropped in PAN-OS version 8.0. Connecting to platforms r
 
 - OpenSSL 1.0.1 or greater
 - Python 2.7 or greater
+- vCenter 6.0, 6.5 and 6.7
 
 Role Variables
 --------------
