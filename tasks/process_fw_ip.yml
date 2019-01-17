@@ -1,0 +1,11 @@
+- name: Unregister firewall tag pair
+  panos_dag_tags:
+    ip_address: '{{ panos_address }}'
+    username: '{{ panos_username }}'
+    password: '{{ panos_password }}'
+    api_key: '{{ panos_api_key }}'
+    ip_to_register: '{{ fw_tag_item.key }}'
+    tag_names: ['{{ fw_ip_item.value }}']
+    operation: 'delete'
+    commit: False
+  when: "vm_tag_pairs['{{fw_tag_item.key}}'] is not defined or '{{fw_tag_item.value}}' not in vm_tag_pairs['{{fw_tag_item.key}}']"

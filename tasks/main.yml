@@ -1,51 +1,34 @@
 ---
 # tasks file for ansible-role-vmware-dagger
-- name: Gather facts from vCenter virtual machines
-  vmware_guest_facts:
-    hostname: "{{ lookup('env','VMWARE_SERVER') }}"
-    username: "{{ lookup('env','VMWARE_USERNAME') }}"
-    password: "{{ lookup('env','VMWARE_PASSWORD') }}"
-    datacenter: '{{ vmware_datacenter }}'
-    uuid: '{{ inventory_hostname[-36:] }}'
-    validate_certs: '{{ vmware_validate_certs }}'
-  register: vm_facts
 
-- name: Parse the primary IPv4 address
-  set_fact:
-    ipv4: '{{ vm_facts.instance.ipv4 }}'
+- name: Register tagged vCenter virtual machines in PAN-OS DAGs
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
-- name: Display the primary IPv4 address
-  debug:
-    var: ipv4
+  vars:
+    vm_tag_pairs: []
 
-- name: Parse the primary IPv6 address
-  set_fact:
-    ipv6: '{{ vm_facts.instance.ipv6 }}'
+  tasks:
+  - name: Iterate over VM tags
+    include: process_vm_tag.yml
+    with_items: '{{ vmware_tags }}'
+    loop_control:
+      loop_var: vm_tag_item
 
-- name: Display the primary IPv6 address
-  debug:
-    var: ipv6
+#  - name: Display the vCenter tags
+#    debug:
+#      var: vm_tag_pairs
 
-- name: Register vCenter IPv4 virtual machines
-  panos_dag_tags:
-    ip_address: '{{ panos_address }}'
-    username: '{{ panos_username }}'
-    password: '{{ panos_password }}'
-    api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ ipv4 }}'
-    tag_names: ['{{ vmware_tag }}']
-    operation: 'add'
-    commit: False
-  when: ipv4 | length > 0
+  - name: Grab the firewall registerd IP addresses
+    panos_registered_ip_facts:
+      ip_address: '{{ panos_address }}'
+      username: '{{ panos_username }}'
+      password: '{{ panos_password }}'
+    register: fw_tag_pairs
 
-- name: Register vCenter IPv6 virtual machines
-  panos_dag_tags:
-    ip_address: '{{ panos_address }}'
-    username: '{{ panos_username }}'
-    password: '{{ panos_password }}'
-    api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ ipv6 }}'
-    tag_names: ['{{ vmware_tag }}']
-    operation: 'add'
-    commit: False
-  when: ipv6 | length > 0
+  - name: Process each firewall tag pair
+    include: process_fw_ip.yml
+    with_items: '{{ fw_tag_pairs.key }}'
+    loop_control:
+      loop_var: fw_tag_item

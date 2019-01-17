@@ -1,0 +1,19 @@
+- set_fact:
+    _tmplist: "{{ _tmplist + [vm_tag_item] }}"
+
+- set_fact:
+    ipv6: '{{ ip_item.instance.ipv6 }}'
+
+- set_fact:
+    vm_tag_pairs: "{{ vm_tag_pairs | combine( {ipv6: _tmplist|unique} ) }}"
+
+- name: Register vCenter IPv6 virtual machines
+  panos_dag_tags:
+    ip_address: '{{ panos_address }}'
+    username: '{{ panos_username }}'
+    password: '{{ panos_password }}'
+    api_key: '{{ panos_api_key }}'
+    ip_to_register: '{{ ipv6 }}'
+    tag_names: ['{{ vm_tag_item }}']
+    operation: 'add'
+    commit: False
