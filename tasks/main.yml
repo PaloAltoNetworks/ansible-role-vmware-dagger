@@ -9,6 +9,9 @@
   vars:
     vm_tag_pairs: []
 
+  roles:
+  - role: PaloAltoNetworks.paloaltonetworks
+
   tasks:
   - name: Iterate over VM tags
     include: process_vm_tag.yml
