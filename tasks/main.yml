@@ -2,7 +2,7 @@
 # tasks file for ansible-role-vmware-dagger
 
 - name: Process vCenter tag list
-  include_tasks: "{{ role_path }}/tasks/process_vm_tag.yml"
+  include_tasks: process_vm_tag.yml
   loop: '{{ vmware_tags }}'
   loop_control:
     loop_var: vm_tag_item
@@ -40,5 +40,5 @@
     var: fw_reg_ips
 
 - name: Process each firewall IP:tag pair
-  include_tasks: "{{ role_path }}/tasks/process_fw_ip.yml"
+  include_tasks: process_fw_ip.yml
   loop: "{{ fw_reg_ips | dict2items | subelements('value') }}"
