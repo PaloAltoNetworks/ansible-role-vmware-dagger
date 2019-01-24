@@ -3,7 +3,7 @@
 
 # VMware variables
 
-vmware_tag: 
+vmware_tags: 
 vmware_server: 
 vmware_username: 
 vmware_password: 

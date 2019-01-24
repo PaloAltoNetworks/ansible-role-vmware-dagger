@@ -1,37 +1,56 @@
 ---
 # tasks file for ansible-role-vmware-dagger
 
-- name: Register tagged vCenter virtual machines in PAN-OS DAGs
+- name: Synchronize tagged vCenter virtual machines with PAN-OS
   hosts: localhost
   connection: local
   gather_facts: no
 
   vars:
-    vm_tag_pairs: []
+  - vm_tag_pairs: {}
 
   roles:
   - role: PaloAltoNetworks.paloaltonetworks
 
   tasks:
-  - name: Iterate over VM tags
+  - name: Process vCenter tag list
     include: process_vm_tag.yml
-    with_items: '{{ vmware_tags }}'
+    loop: '{{ vmware_tags }}'
     loop_control:
       loop_var: vm_tag_item
 
-#  - name: Display the vCenter tags
-#    debug:
-#      var: vm_tag_pairs
+  - name: Display the vCenter IP:tag dictionary
+    debug:
+      var: vm_tag_pairs
 
-  - name: Grab the firewall registerd IP addresses
+  - name: Register the vCenter IP:tag dictionary
+    panos_dag_tags:
+      ip_address: '{{ panos_address }}'
+      username: '{{ panos_username }}'
+      password: '{{ panos_password }}'
+      api_key: '{{ panos_api_key }}'
+      ip_to_register: '{{ vm_ip_item.key }}'
+      tag_names: '{{ vm_ip_item.value }}'
+      operation: 'add'
+      commit: False
+    loop: '{{ vm_tag_pairs|dict2items }}'
+    loop_control:
+      loop_var: vm_ip_item
+
+  - name: Grab the firewall registered IP addresses
     panos_registered_ip_facts:
       ip_address: '{{ panos_address }}'
       username: '{{ panos_username }}'
       password: '{{ panos_password }}'
-    register: fw_tag_pairs
+    register: fw_reg_ips_results
 
-  - name: Process each firewall tag pair
+  - set_fact:
+      fw_reg_ips: '{{ fw_reg_ips_results.results }}'
+
+  - name: Display the firewall IP:tag dictionary
+    debug:
+      var: fw_reg_ips
+
+  - name: Process each firewall IP:tag pair
     include: process_fw_ip.yml
-    with_items: '{{ fw_tag_pairs.key }}'
-    loop_control:
-      loop_var: fw_tag_item
+    loop: "{{ fw_reg_ips | dict2items | subelements('value') }}"

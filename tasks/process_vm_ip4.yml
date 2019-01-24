@@ -1,19 +1,19 @@
-- set_fact:
-    _tmplist: "{{ _tmplist + [vm_tag_item] }}"
-
-- set_fact:
+- name: Process the VM IP address
+  set_fact:
     ipv4: '{{ ip_item.instance.ipv4 }}'
 
 - set_fact:
-    vm_tag_pairs: "{{ vm_tag_pairs | combine( {ipv4: _tmplist|unique} ) }}"
+    _tmplist: []
 
-- name: Register vCenter IPv4 virtual machines
-  panos_dag_tags:
-    ip_address: '{{ panos_address }}'
-    username: '{{ panos_username }}'
-    password: '{{ panos_password }}'
-    api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ ipv4 }}'
-    tag_names: ['{{ vm_tag_item }}']
-    operation: 'add'
-    commit: False
+- set_fact:
+    _tmplist: "{{ _tmplist + [vm_tag_item] }}"
+  when: ipv4 | length > 0
+
+- set_fact:
+    _tmplist: "{{ _tmplist + vm_tag_pairs[ipv4] }}"
+  when: ipv4 | length > 0 and vm_tag_pairs[ipv4] is defined
+
+- name: Update the vCenter IP:tag dictionary
+  set_fact:
+    vm_tag_pairs: "{{ vm_tag_pairs | combine( {ipv4: _tmplist|unique} ) }}"
+  when: ipv4 | length > 0

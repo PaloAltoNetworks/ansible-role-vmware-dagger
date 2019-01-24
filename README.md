@@ -31,7 +31,7 @@ The required variables are listed below, along with default values (see defaults
 
 ```
 # VMware variables
-vmware_tag: 
+vmware_tags: 
 vmware_datacenter: 
 vmware_validate_certs: False
 
@@ -47,7 +47,7 @@ Example Playbook
 ```
 ---
 - name: Register tagged vCenter virtual machines in PAN-OS DAGs
-  hosts: '{{ vmware_tag }}'
+  hosts: localhost
   connection: local
 
   roles:
@@ -91,18 +91,21 @@ $ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars=@myvars.yml
 
 *Command line (JSON):*
 ```
-$ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='{"vm_tag":"MyTag","vmware_datacenter":"MyLab", \
+$ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='{"vm_tag":["Tag1","Tag2"],"vmware_datacenter":"MyLab", \
 "panos_address":"10.0.0.1","panos_username":"admin","panos_password":"s3cr3tp@ssw0rd"}'
 ```
 
 *Command line (YAML):*
 ```
 $ ansible-playbook -i vmware.yml myplaybook.yml --extra-vars='
-vm_tag: "MyTag"
-vmware_datacenter: "MyLab"
-panos_address: "10.0.0.1"
-panos_username: "admin"
-panos_password: "s3cr3tp@ssw0rd"'
+vm_tags:
+- Tag1
+- Tag2
+vmware_datacenter: MyLab
+panos_address: 10.0.0.1
+panos_username: admin
+panos_password: s3cr3tp@ssw0rd
+'
 ```
 
 License
