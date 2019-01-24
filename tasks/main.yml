@@ -1,6 +1,10 @@
 ---
 # tasks file for ansible-role-vmware-dagger
 
+- name: Create an empty vCenter IP:tag dictionary
+  set_fact:
+    vm_tag_pairs: {}
+    
 - name: Process vCenter tag list
   include_tasks: process_vm_tag.yml
   loop: '{{ vmware_tags }}'

@@ -49,7 +49,7 @@ Example Playbook
 - name: Synchronize tagged vCenter virtual machines with PAN-OS
   hosts: localhost
   connection: local
-
+  gather_facts: no
   roles:
   - stealthllama.vmware_dagger
 ```

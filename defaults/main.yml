@@ -16,6 +16,3 @@ panos_address:
 panos_username: 
 panos_password: 
 panos_api_key: 
-
-# Empty vCenter IP:tag dictionary
-vm_tag_pairs: {}
