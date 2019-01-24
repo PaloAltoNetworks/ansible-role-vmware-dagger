@@ -2,14 +2,17 @@
   set_fact:
     ipv4: '{{ ip_item.instance.ipv4 }}'
 
-- set_fact:
+- name: Create an empty tag list
+  set_fact:
     _tmplist: []
 
-- set_fact:
+- name: Append the VM tag to the tag list
+  set_fact:
     _tmplist: "{{ _tmplist + [vm_tag_item] }}"
   when: ipv4 | length > 0
 
-- set_fact:
+- name: Append to an existing IP tag list
+  set_fact:
     _tmplist: "{{ _tmplist + vm_tag_pairs[ipv4] }}"
   when: ipv4 | length > 0 and vm_tag_pairs[ipv4] is defined
 

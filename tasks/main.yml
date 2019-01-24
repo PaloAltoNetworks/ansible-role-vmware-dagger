@@ -31,7 +31,8 @@
     password: '{{ panos_password }}'
   register: fw_reg_ips_results
 
-- set_fact:
+- name: Create the firewall IP:tag dictionary
+  set_fact:
     fw_reg_ips: '{{ fw_reg_ips_results.results }}'
 
 - name: Display the firewall IP:tag dictionary
