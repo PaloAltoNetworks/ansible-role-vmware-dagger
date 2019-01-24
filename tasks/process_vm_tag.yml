@@ -1,0 +1,30 @@
+- name: Processing vCenter tag value
+  debug:
+    var: vm_tag_item
+
+- name: Gather facts from vCenter virtual machines
+  vmware_guest_facts:
+    hostname: "{{ lookup('env','VMWARE_SERVER') }}"
+    username: "{{ lookup('env','VMWARE_USERNAME') }}"
+    password: "{{ lookup('env','VMWARE_PASSWORD') }}"
+    datacenter: '{{ vmware_datacenter }}'
+    uuid: '{{ vm_item[-36:] }}'
+    validate_certs: '{{ vmware_validate_certs }}'
+  register: vm_facts
+  with_inventory_hostnames: '{{ vm_tag_item }}'
+  loop_control:
+    loop_var: vm_item
+    label: "{{ vm_item[-36:] }}"
+
+- name: Add each IP:tag pair to a dictionary
+  include_tasks: process_vm_ipv4.yml
+  loop: '{{ vm_facts.results }}'
+  loop_control:
+    loop_var: ip_item
+    label: "{{ ip_item.instance.ipv4 }}"
+
+- include_tasks: process_vm_ipv6.yml
+  loop: '{{ vm_facts.results }}'
+  loop_control:
+    loop_var: ip_item
+    label: "{{ ip_item.instance.ipv6 }}"

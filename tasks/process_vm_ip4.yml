@@ -1,0 +1,19 @@
+- name: Process the VM IP address
+  set_fact:
+    ipv4: '{{ ip_item.instance.ipv4 }}'
+
+- set_fact:
+    _tmplist: []
+
+- set_fact:
+    _tmplist: "{{ _tmplist + [vm_tag_item] }}"
+  when: ipv4 | length > 0
+
+- set_fact:
+    _tmplist: "{{ _tmplist + vm_tag_pairs[ipv4] }}"
+  when: ipv4 | length > 0 and vm_tag_pairs[ipv4] is defined
+
+- name: Update the vCenter IP:tag dictionary
+  set_fact:
+    vm_tag_pairs: "{{ vm_tag_pairs | combine( {ipv4: _tmplist|unique} ) }}"
+  when: ipv4 | length > 0

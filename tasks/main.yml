@@ -1,51 +1,56 @@
 ---
 # tasks file for ansible-role-vmware-dagger
-- name: Gather facts from vCenter virtual machines
-  vmware_guest_facts:
-    hostname: "{{ lookup('env','VMWARE_SERVER') }}"
-    username: "{{ lookup('env','VMWARE_USERNAME') }}"
-    password: "{{ lookup('env','VMWARE_PASSWORD') }}"
-    datacenter: '{{ vmware_datacenter }}'
-    uuid: '{{ inventory_hostname[-36:] }}'
-    validate_certs: '{{ vmware_validate_certs }}'
-  register: vm_facts
 
-- name: Parse the primary IPv4 address
-  set_fact:
-    ipv4: '{{ vm_facts.instance.ipv4 }}'
+- name: Synchronize tagged vCenter virtual machines with PAN-OS
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
-- name: Display the primary IPv4 address
-  debug:
-    var: ipv4
+  vars:
+  - vm_tag_pairs: {}
 
-- name: Parse the primary IPv6 address
-  set_fact:
-    ipv6: '{{ vm_facts.instance.ipv6 }}'
+  roles:
+  - role: PaloAltoNetworks.paloaltonetworks
 
-- name: Display the primary IPv6 address
-  debug:
-    var: ipv6
+  tasks:
+  - name: Process vCenter tag list
+    include: process_vm_tag.yml
+    loop: '{{ vmware_tags }}'
+    loop_control:
+      loop_var: vm_tag_item
 
-- name: Register vCenter IPv4 virtual machines
-  panos_dag_tags:
-    ip_address: '{{ panos_address }}'
-    username: '{{ panos_username }}'
-    password: '{{ panos_password }}'
-    api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ ipv4 }}'
-    tag_names: ['{{ vmware_tag }}']
-    operation: 'add'
-    commit: False
-  when: ipv4 | length > 0
+  - name: Display the vCenter IP:tag dictionary
+    debug:
+      var: vm_tag_pairs
 
-- name: Register vCenter IPv6 virtual machines
-  panos_dag_tags:
-    ip_address: '{{ panos_address }}'
-    username: '{{ panos_username }}'
-    password: '{{ panos_password }}'
-    api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ ipv6 }}'
-    tag_names: ['{{ vmware_tag }}']
-    operation: 'add'
-    commit: False
-  when: ipv6 | length > 0
+  - name: Register the vCenter IP:tag dictionary
+    panos_dag_tags:
+      ip_address: '{{ panos_address }}'
+      username: '{{ panos_username }}'
+      password: '{{ panos_password }}'
+      api_key: '{{ panos_api_key }}'
+      ip_to_register: '{{ vm_ip_item.key }}'
+      tag_names: '{{ vm_ip_item.value }}'
+      operation: 'add'
+      commit: False
+    loop: '{{ vm_tag_pairs|dict2items }}'
+    loop_control:
+      loop_var: vm_ip_item
+
+  - name: Grab the firewall registered IP addresses
+    panos_registered_ip_facts:
+      ip_address: '{{ panos_address }}'
+      username: '{{ panos_username }}'
+      password: '{{ panos_password }}'
+    register: fw_reg_ips_results
+
+  - set_fact:
+      fw_reg_ips: '{{ fw_reg_ips_results.results }}'
+
+  - name: Display the firewall IP:tag dictionary
+    debug:
+      var: fw_reg_ips
+
+  - name: Process each firewall IP:tag pair
+    include: process_fw_ip.yml
+    loop: "{{ fw_reg_ips | dict2items | subelements('value') }}"
