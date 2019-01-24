@@ -46,7 +46,7 @@ Example Playbook
 ----------------
 ```
 ---
-- name: Register tagged vCenter virtual machines in PAN-OS DAGs
+- name: Synchronize tagged vCenter virtual machines with PAN-OS
   hosts: localhost
   connection: local
 
