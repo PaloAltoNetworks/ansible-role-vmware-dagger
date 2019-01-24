@@ -12,15 +12,14 @@
     var: vm_tag_pairs
 
 - name: Register the vCenter IP:tag dictionary
-  panos_dag_tags:
+  panos_registered_ip:
     ip_address: '{{ panos_address }}'
     username: '{{ panos_username }}'
     password: '{{ panos_password }}'
     api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ vm_ip_item.key }}'
-    tag_names: '{{ vm_ip_item.value }}'
-    operation: 'add'
-    commit: False
+    ips: ['{{ vm_ip_item.key }}']
+    tags: '{{ vm_ip_item.value }}'
+    state: 'present'
   loop: '{{ vm_tag_pairs|dict2items }}'
   loop_control:
     loop_var: vm_ip_item

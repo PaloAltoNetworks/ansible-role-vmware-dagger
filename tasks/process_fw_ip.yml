@@ -1,11 +1,10 @@
 - name: Unregister extraneous firewall IP:tag pairs
-  panos_dag_tags:
+  panos_registered_ip:
     ip_address: '{{ panos_address }}'
     username: '{{ panos_username }}'
     password: '{{ panos_password }}'
     api_key: '{{ panos_api_key }}'
-    ip_to_register: '{{ item.0.key }}'
-    tag_names: '{{ item.1 }}'
-    operation: 'delete'
-    commit: False
+    ips: ['{{ item.0.key }}']
+    tags: '{{ item.1 }}'
+    state: 'absent'
   when: "vm_tag_pairs[item.0.key] is not defined or item.1 not in vm_tag_pairs[item.0.key]"
