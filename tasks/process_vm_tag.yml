@@ -17,13 +17,13 @@
     label: "{{ vm_item[-36:] }}"
 
 - name: Add each IP:tag pair to a dictionary
-  include_tasks: process_vm_ipv4.yml
+  include_tasks: "{{ role_path }}/tasks/process_vm_ipv4.yml"
   loop: '{{ vm_facts.results }}'
   loop_control:
     loop_var: ip_item
     label: "{{ ip_item.instance.ipv4 }}"
 
-- include_tasks: process_vm_ipv6.yml
+- include_tasks: "{{ role_path }}/tasks/process_vm_ipv6.yml"
   loop: '{{ vm_facts.results }}'
   loop_control:
     loop_var: ip_item
