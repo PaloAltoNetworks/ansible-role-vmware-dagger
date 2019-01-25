@@ -7,4 +7,4 @@
     ips: ['{{ item.0.key }}']
     tags: '{{ item.1 }}'
     state: 'absent'
-  when: "vm_tag_pairs[item.0.key] is not defined or item.1 not in vm_tag_pairs[item.0.key]"
+  when: "( (vm_tag_pairs[item.0.key] is defined) and (item.1 not in vm_tag_pairs[item.0.key]) and (item.1 in vmware_tags) ) or ( (vm_tag_pairs[item.0.key] is not defined) and (item.1 in vmware_tags) )"
